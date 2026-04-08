@@ -163,10 +163,10 @@ async function generateIdea() {
   resultText.innerHTML = '<div class="loading-dots"><span></span><span></span><span></span></div>';
   var prompt = 'Esti un expert in aranjamente florale. Genereaza o idee de aranjament pentru: ' + (ocazie ? 'Ocazia: ' + ocazie + '. ' : '') + (stil ? 'Stil: ' + stil + '. ' : '') + (detalii ? 'Detalii: ' + detalii : '') + ' Raspunde in romana in 3-4 propozitii.';
   try {
-    var response = await fetch('https://api.anthropic.com/v1/messages', {
+    var response = await fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages: [{ role: 'user', content: prompt }] })
+      body: JSON.stringify({ ocazie: ocazie, stil: stil, detalii: detalii
     });
     var data = await response.json();
     resultText.textContent = data.content[0].text;
