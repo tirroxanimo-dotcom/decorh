@@ -145,7 +145,7 @@ function goToSlide(n) {
   dots[currentSlide].classList.add('active');
 }
 setInterval(function() { goToSlide((currentSlide + 1) % BG_IMAGES.length); }, 5000);
-document.getElementById('gen-bg-photo').style.backgroundImage = 'url(\'' + BG_IMAGES[0] + '\')';
+document.getElementById('gen-bg-photo').style.backgroundImage = 'url('images/img10.jpeg')';
 async function generateIdea() {
   var ocazie = document.getElementById('sel-ocazie').value;
   var stil = document.getElementById('sel-stil').value;
