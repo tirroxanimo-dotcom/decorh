@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DecorH – Aranjamente cu Suflet</title>
+<title>DecorH - Aranjamente cu Suflet</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -77,7 +77,7 @@ footer { margin-top: auto; text-align: center; padding: 16px; font-size: 0.72rem
         <option value="Nunta">Nunta</option>
         <option value="Botez">Botez</option>
         <option value="Zi de nastere">Zi de nastere</option>
-        <option value="Martisор">Martisor</option>
+        <option value="Martisor">Martisor</option>
         <option value="8 Martie">8 Martie</option>
         <option value="Decoratiune acasa">Decoratiune acasa</option>
       </select>
@@ -103,7 +103,7 @@ footer { margin-top: auto; text-align: center; padding: 16px; font-size: 0.72rem
   <footer>2025 DecorH - Creat cu dragoste</footer>
 </div>
 <script>
-const BG_IMAGES = [
+var BG_IMAGES = [
   "images/Imagine WhatsApp 2026-04-08 la 09.12.05.jpeg",
   "images/Imagine WhatsApp 2026-04-08 la 09.12.19.jpeg",
   "images/Imagine WhatsApp 2026-04-08 la 09.12.37.jpeg",
@@ -121,7 +121,7 @@ const BG_IMAGES = [
   "images/Imagine WhatsApp 2026-04-08 la 12.14.12.jpeg",
   "images/Imagine WhatsApp 2026-04-08 la 12.15.49.jpeg"
 ];
-const NAV_ITEMS = [
+var NAV_ITEMS = [
   { label: "Nunti", img: "images/Imagine WhatsApp 2026-04-08 la 09.12.05.jpeg" },
   { label: "Botezuri", img: "images/Imagine WhatsApp 2026-04-08 la 09.12.19.jpeg" },
   { label: "Pasti", img: "images/Imagine WhatsApp 2026-04-08 la 09.12.37.jpeg" },
@@ -129,30 +129,62 @@ const NAV_ITEMS = [
   { label: "8 Martie", img: "images/Imagine WhatsApp 2026-04-08 la 09.13.19.jpeg" },
   { label: "Acasa", img: "images/Imagine WhatsApp 2026-04-08 la 09.13.36.jpeg" }
 ];
-const nav = document.getElementById('main-nav');
-NAV_ITEMS.forEach(item => {
-  const btn = document.createElement('div');
+var navEl = document.getElementById('main-nav');
+NAV_ITEMS.forEach(function(item) {
+  var btn = document.createElement('div');
   btn.className = 'nav-btn';
-  btn.innerHTML = `<div class="btn-bg" style="background-image:url('${item.img}')"></div><div class="btn-overlay"></div><div class="btn-label">${item.label}</div>`;
-  nav.appendChild(btn);
+  btn.innerHTML = '<div class="btn-bg" style="background-image:url(\'' + item.img + '\')"></div><div class="btn-overlay"></div><div class="btn-label">' + item.label + '</div>';
+  navEl.appendChild(btn);
 });
-const bgWrap = document.getElementById('bg-wrap');
-const dotsContainer = document.getElementById('slide-dots');
-let currentSlide = 0;
-BG_IMAGES.forEach((src, i) => {
-  const slide = document.createElement('div');
+var bgWrap = document.getElementById('bg-wrap');
+var dotsContainer = document.getElementById('slide-dots');
+var currentSlide = 0;
+BG_IMAGES.forEach(function(src, i) {
+  var slide = document.createElement('div');
   slide.className = 'bg-slide' + (i === 0 ? ' active' : '');
-  slide.style.backgroundImage = `url('${src}')`;
+  slide.style.backgroundImage = 'url(\'' + src + '\')';
   bgWrap.appendChild(slide);
-  const dot = document.createElement('div');
+  var dot = document.createElement('div');
   dot.className = 'dot' + (i === 0 ? ' active' : '');
-  dot.onclick = () => goToSlide(i);
+  dot.onclick = (function(n) { return function() { goToSlide(n); }; })(i);
   dotsContainer.appendChild(dot);
 });
 function goToSlide(n) {
-  const slides = document.querySelectorAll('.bg-slide');
-  const dots = document.querySelectorAll('.dot');
+  var slides = document.querySelectorAll('.bg-slide');
+  var dots = document.querySelectorAll('.dot');
   slides[currentSlide].classList.remove('active');
   dots[currentSlide].classList.remove('active');
   currentSlide = n;
-  slides[currentSlide].classList.add(
+  slides[currentSlide].classList.add('active');
+  dots[currentSlide].classList.add('active');
+}
+setInterval(function() { goToSlide((currentSlide + 1) % BG_IMAGES.length); }, 5000);
+document.getElementById('gen-bg-photo').style.backgroundImage = 'url(\'' + BG_IMAGES[0] + '\')';
+async function generateIdea() {
+  var ocazie = document.getElementById('sel-ocazie').value;
+  var stil = document.getElementById('sel-stil').value;
+  var detalii = document.getElementById('inp-detalii').value;
+  if (!ocazie && !stil && !detalii) { alert('Te rog completeaza cel putin un camp!'); return; }
+  var btn = document.getElementById('btn-gen');
+  var resultBox = document.getElementById('result-box');
+  var resultText = document.getElementById('result-text');
+  btn.disabled = true;
+  resultBox.classList.add('visible');
+  resultText.innerHTML = '<div class="loading-dots"><span></span><span></span><span></span></div>';
+  var prompt = 'Esti un expert in aranjamente florale si decoratiuni pentru evenimente. Genereaza o idee detaliata si creativa de aranjament pentru: ' + (ocazie ? 'Ocazia: ' + ocazie + '. ' : '') + (stil ? 'Stilul dorit: ' + stil + '. ' : '') + (detalii ? 'Detalii: ' + detalii + '. ' : '') + 'Descrie aranjamentul in 3-4 propozitii frumoase, incluzand florile recomandate, culorile si atmosfera creata. Raspunde in romana.';
+  try {
+    var response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages: [{ role: 'user', content: prompt }] })
+    });
+    var data = await response.json();
+    resultText.textContent = data.content[0].text;
+  } catch (err) {
+    resultText.textContent = 'A aparut o eroare. Te rog incearca din nou.';
+  }
+  btn.disabled = false;
+}
+</script>
+</body>
+</html>
