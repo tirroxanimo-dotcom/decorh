@@ -169,7 +169,7 @@ async function generateIdea() {
       body: JSON.stringify({ ocazie: ocazie, stil: stil, detalii: detalii
     });
     var data = await response.json();
-    resultText.textContent = data.content[0].text;
+    resultText.textContent = data.result;
   } catch (err) {
     resultText.textContent = 'A aparut o eroare. Te rog incearca din nou.';
   }
