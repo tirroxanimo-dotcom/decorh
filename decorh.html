@@ -31,7 +31,7 @@ nav.main-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 16p
 #gen-bg-photo::after { content: ""; position: absolute; inset: 0; background: rgba(10,6,2,0.25); }
 #generator > *:not(#gen-bg-photo) { position: relative; z-index: 1; }
 #generator h2 { font-family: "Cormorant Garamond", serif; font-size: 1.5rem; font-weight: 300; color: #f5d98a; margin-bottom: 6px; }
-#generator p.gen-sub { font-size: 0.78rem; color: rgba(255,255,255,0.75); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 18px; }
+#generator p.gen-sub { font-size: 0.78rem; color: rgba(255,255,255,0.85); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 18px; }
 .gen-row { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
 .gen-select, .gen-input { flex: 1; min-width: 120px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 10px; color: #fff; padding: 10px 14px; font-family: "Jost", sans-serif; font-size: 0.88rem; outline: none; transition: border-color 0.2s; }
 .gen-select option { background: #1a1208; color: #fff; }
@@ -110,18 +110,20 @@ var BG_IMAGES = [
   "images/img14.jpeg","images/img15.jpeg","images/img16.jpeg"
 ];
 var NAV_ITEMS = [
-  { label: "Nunti", img: "images/img2.jpeg" },
-  { label: "Botezuri", img: "images/img3.jpeg" },
-  { label: "Pasti", img: "images/img4.jpeg" },
-  { label: "Craciun", img: "images/img5.jpeg" },
-  { label: "8 Martie", img: "images/img6.jpeg" },
-  { label: "Acasa", img: "images/img7.jpeg" }
+  { label: "Nunti", img: "images/img2.jpeg", page: "nunti.html" },
+  { label: "Botezuri", img: "images/img3.jpeg", page: "botezuri.html" },
+  { label: "Pasti", img: "images/img4.jpeg", page: "pasti.html" },
+  { label: "Craciun", img: "images/img5.jpeg", page: "craciun.html" },
+  { label: "8 Martie", img: "images/img6.jpeg", page: "martie.html" },
+  { label: "Acasa", img: "images/img7.jpeg", page: "acasa.html" },
+  { label: "Idei Noi", img: "images/img9.jpeg", page: "idei.html" }
 ];
 var navEl = document.getElementById('main-nav');
 NAV_ITEMS.forEach(function(item) {
   var btn = document.createElement('div');
   btn.className = 'nav-btn';
   btn.innerHTML = '<div class="btn-bg" style="background-image:url(\'' + item.img + '\')"></div><div class="btn-overlay"></div><div class="btn-label">' + item.label + '</div>';
+  btn.onclick = function() { window.location.href = item.page; };
   navEl.appendChild(btn);
 });
 var bgWrap = document.getElementById('bg-wrap');
