@@ -166,8 +166,8 @@ async function generateIdea() {
     var response = await fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ocazie: ocazie, stil: stil, detalii: detalii
-    });
+      body: JSON.stringify({ ocazie: ocazie, stil: stil, detalii: detalii })
+  });
     var data = await response.json();
     resultText.textContent = data.result;
   } catch (err) {
