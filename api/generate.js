@@ -14,11 +14,10 @@ export default async function handler(req, res) {
       body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
     });
     const data = await r.json();
-    console.log('Gemini response:', JSON.stringify(data));
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Nu am putut genera.';
+    if (data.error) return res.status(200).json({ result: 'Eroare Gemini: ' + data.error.message });
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Raspuns gol de la Gemini.';
     res.status(200).json({ result: text });
   } catch (err) {
-    console.log('Error:', err.message);
-    res.status(500).json({ result: 'Eroare: ' + err.message });
+    res.status(200).json({ result: 'Eroare: ' + err.message });
   }
 }
