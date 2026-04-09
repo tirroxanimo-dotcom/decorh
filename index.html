@@ -182,6 +182,7 @@ async function generateIdea() {
   imgLabel.style.display = 'none';
   saveRow.style.display = 'none';
   chk.checked = false;
+  lastImageUrl = '';
   resultText.innerHTML = '<div class="loading-dots"><span></span><span></span><span></span></div>';
   try {
     var response = await fetch('/api/generate', {
@@ -192,6 +193,7 @@ async function generateIdea() {
     var data = await response.json();
     lastText = data.result;
     resultText.textContent = lastText;
+    saveRow.style.display = 'flex';
   } catch (err) {
     lastText = '';
     resultText.textContent = 'A aparut o eroare. Te rog incearca din nou.';
@@ -208,7 +210,6 @@ async function generateIdea() {
       resultImage.onload = function() {
         resultImage.style.display = 'block';
         imgLabel.style.display = 'block';
-        saveRow.style.display = 'flex';
       };
     }
   } catch (e) {
@@ -236,14 +237,14 @@ function openFullscreenImg() {
 async function saveIdee() {
   var chk = document.getElementById('chk-save');
   if (!chk.checked) { alert('Bifeaza casuta pentru a salva!'); return; }
-  if (!lastImageUrl) { alert('Nu exista imagine de salvat!'); return; }
+  if (!lastText) { alert('Nu exista idee de salvat!'); return; }
   try {
     var getRes = await fetch('https://api.jsonbin.io/v3/b/' + BIN_ID + '/latest', {
-      headers: { 'X-Master-Key': BIN_KEY }
+      headers: { 'X-Master-Key': BIN_KEY, 'X-Bin-Meta': 'false' }
     });
-    var getData = await getRes.json();
-    var idei = getData.record || [];
+    var idei = await getRes.json();
     if (!Array.isArray(idei)) idei = [];
+    idei = idei.filter(function(i) { return i && i.text; });
     idei.push({ img: lastImageUrl, text: lastText });
     await fetch('https://api.jsonbin.io/v3/b/' + BIN_ID, {
       method: 'PUT',
