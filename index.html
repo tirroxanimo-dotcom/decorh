@@ -44,6 +44,8 @@ nav.main-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 16p
 #result-box.visible { display: block; }
 #result-text { font-family: "Cormorant Garamond", serif; font-size: 1.05rem; font-weight: 300; color: #fdf6ec; line-height: 1.8; white-space: pre-wrap; }
 .result-label { font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+#result-image { width: 100%; border-radius: 12px; margin-top: 16px; display: none; border: 1px solid rgba(255,255,255,0.2); }
+#result-image.visible { display: block; }
 .loading-dots span { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); margin: 0 2px; animation: dot-bounce 1.2s infinite; }
 .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
 .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
@@ -98,6 +100,7 @@ footer { margin-top: auto; text-align: center; padding: 16px; font-size: 0.72rem
     <div id="result-box">
       <div class="result-label">Idee generata</div>
       <div id="result-text"></div>
+      <img id="result-image" alt="Aranjament generat" />
     </div>
   </section>
   <footer>2025 DecorH - Creat cu dragoste</footer>
@@ -158,8 +161,10 @@ async function generateIdea() {
   var btn = document.getElementById('btn-gen');
   var resultBox = document.getElementById('result-box');
   var resultText = document.getElementById('result-text');
+  var resultImage = document.getElementById('result-image');
   btn.disabled = true;
   resultBox.classList.add('visible');
+  resultImage.classList.remove('visible');
   resultText.innerHTML = '<div class="loading-dots"><span></span><span></span><span></span></div>';
   try {
     var response = await fetch('/api/generate', {
@@ -169,6 +174,15 @@ async function generateIdea() {
     });
     var data = await response.json();
     resultText.textContent = data.result;
+    var imagePrompt = 'floral arrangement ' +
+      (ocazie ? ocazie + ' ' : '') +
+      (stil ? stil + ' style ' : '') +
+      (detalii ? detalii + ' ' : '') +
+      'elegant professional photography white background';
+    imagePrompt = encodeURIComponent(imagePrompt);
+    resultImage.src = 'https://image.pollinations.ai/prompt/' + imagePrompt + '?width=600&height=400&nologo=true';
+    resultImage.onload = function() { resultImage.classList.add('visible'); };
+    resultImage.onerror = function() { resultImage.classList.remove('visible'); };
   } catch (err) {
     resultText.textContent = 'A aparut o eroare. Te rog incearca din nou.';
   }
