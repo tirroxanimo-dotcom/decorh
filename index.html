@@ -44,7 +44,7 @@ nav.main-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 16p
 #result-box.visible { display: block; }
 #result-text { font-family: "Cormorant Garamond", serif; font-size: 1.05rem; font-weight: 300; color: #fdf6ec; line-height: 1.8; white-space: pre-wrap; }
 .result-label { font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
-.img-label { font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-top: 18px; margin-bottom: 8px; }
+.img-label { font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-top: 18px; margin-bottom: 8px; display: none; }
 .loading-dots span { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); margin: 0 2px; animation: dot-bounce 1.2s infinite; }
 .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
 .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
@@ -99,13 +99,14 @@ footer { margin-top: auto; text-align: center; padding: 16px; font-size: 0.72rem
     <div id="result-box">
       <div class="result-label">Idee generata</div>
       <div id="result-text"></div>
-      <div class="img-label" id="img-label" style="display:none">Previzualizare aranjament</div>
+      <div class="img-label" id="img-label">Previzualizare aranjament</div>
       <img id="result-image" alt="Aranjament generat" style="width:100%;border-radius:12px;display:none;border:1px solid rgba(255,255,255,0.2);">
     </div>
   </section>
   <footer>2025 DecorH - Creat cu dragoste</footer>
 </div>
 <script>
+var UNSPLASH_KEY = 'kSVsTcXsDnfrUV_gMBsoGhMs_WxXI7WNy2pnuea4pyg';
 var BG_IMAGES = [
   "images/img5.jpeg","images/img2.jpeg","images/img3.jpeg","images/img4.jpeg",
   "images/img6.jpeg","images/img7.jpeg","images/img8.jpeg","images/img9.jpeg",
@@ -179,24 +180,22 @@ async function generateIdea() {
   } catch (err) {
     resultText.textContent = 'A aparut o eroare. Te rog incearca din nou.';
   }
-  setTimeout(function() {
-    var imagePrompt = encodeURIComponent(
-      'beautiful floral arrangement ' +
-      (ocazie || '') + ' ' +
-      (stil || '') + ' style ' +
-      (detalii || '') +
-      ' elegant photography soft light'
+  try {
+    var query = 'floral arrangement ' + (ocazie || '') + ' ' + (stil || '') + ' ' + (detalii || '');
+    var imgResponse = await fetch(
+      'https://api.unsplash.com/photos/random?query=' + encodeURIComponent(query) + '&orientation=landscape&client_id=' + UNSPLASH_KEY
     );
-    resultImage.src = 'https://image.pollinations.ai/prompt/' + imagePrompt + '?width=600&height=400&nologo=true&seed=' + Math.floor(Math.random() * 99999);
-    resultImage.onload = function() {
-      imgLabel.style.display = 'block';
-      resultImage.style.display = 'block';
-    };
-    resultImage.onerror = function() {
-      resultImage.style.display = 'none';
-      imgLabel.style.display = 'none';
-    };
-  }, 2000);
+    var imgData = await imgResponse.json();
+    if (imgData && imgData.urls && imgData.urls.regular) {
+      resultImage.src = imgData.urls.regular;
+      resultImage.onload = function() {
+        resultImage.style.display = 'block';
+        imgLabel.style.display = 'block';
+      };
+    }
+  } catch (e) {
+    resultImage.style.display = 'none';
+  }
   btn.disabled = false;
 }
 </script>
