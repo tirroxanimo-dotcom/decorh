@@ -54,11 +54,11 @@ async function loadIdei() {
   var container = document.getElementById('idei-container');
   try {
     var res = await fetch('https://api.jsonbin.io/v3/b/' + BIN_ID + '/latest', {
-      headers: { 'X-Master-Key': BIN_KEY }
+      headers: { 'X-Master-Key': BIN_KEY, 'X-Bin-Meta': 'false' }
     });
-    var data = await res.json();
-    var idei = data.record || [];
+    var idei = await res.json();
     if (!Array.isArray(idei)) idei = [];
+    idei = idei.filter(function(i) { return i && i.img; });
     if (idei.length === 0) {
       container.innerHTML = '<p class="no-idei">Nu ai salvat nicio idee inca. Mergi la generator si salveaza idei!</p>';
       return;
@@ -85,10 +85,11 @@ async function deleteIdee(index, e) {
   e.stopPropagation();
   try {
     var res = await fetch('https://api.jsonbin.io/v3/b/' + BIN_ID + '/latest', {
-      headers: { 'X-Master-Key': BIN_KEY }
+      headers: { 'X-Master-Key': BIN_KEY, 'X-Bin-Meta': 'false' }
     });
-    var data = await res.json();
-    var idei = data.record || [];
+    var idei = await res.json();
+    if (!Array.isArray(idei)) idei = [];
+    idei = idei.filter(function(i) { return i && i.img; });
     idei.splice(index, 1);
     await fetch('https://api.jsonbin.io/v3/b/' + BIN_ID, {
       method: 'PUT',
