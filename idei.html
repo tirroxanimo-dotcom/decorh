@@ -31,6 +31,7 @@ h1 em { font-style: italic; color: #f5d98a; }
 #fullscreen-text { font-family: "Cormorant Garamond", serif; font-size: 1rem; color: #fdf6ec; margin-top: 16px; text-align: center; max-width: 600px; line-height: 1.7; }
 #fullscreen-close { position: absolute; top: 20px; right: 24px; background: none; border: 1px solid rgba(255,255,255,0.4); color: #fff; font-size: 1.2rem; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; }
 #fullscreen-close:hover { background: rgba(255,255,255,0.1); }
+.loading-msg { font-family: "Cormorant Garamond", serif; font-size: 1.15rem; color: rgba(255,255,255,0.6); font-style: italic; margin-top: 20px; }
 </style>
 </head>
 <body>
@@ -39,7 +40,7 @@ h1 em { font-style: italic; color: #f5d98a; }
   <a class="back-btn" href="index.html">Inapoi</a>
   <h1><em>DecorH</em> — Idei Salvate</h1>
   <div class="gold-divider"></div>
-  <div id="idei-container"></div>
+  <div id="idei-container"><p class="loading-msg">Se incarca ideile...</p></div>
 </div>
 <div id="fullscreen-overlay">
   <button id="fullscreen-close" onclick="closeFullscreen()">✕</button>
@@ -47,17 +48,33 @@ h1 em { font-style: italic; color: #f5d98a; }
   <div id="fullscreen-text"></div>
 </div>
 <script>
+var BIN_ID = '69d7b4b0856a682189160322';
+var BIN_KEY = '$2a$10$bYLghQCqVt5qiTAJOGpMsO7FISOLe7dPr5B.pHU4Ace9/L.abt76y';
 var PIN = '2026';
-function loadIdei() {
+var ideiCache = [];
+async function loadIdei() {
   var container = document.getElementById('idei-container');
-  var idei = JSON.parse(localStorage.getItem('decorh_idei') || '[]');
-  if (idei.length === 0) {
+  try {
+    var res = await fetch('https://api.jsonbin.io/v3/b/' + BIN_ID + '/latest', {
+      headers: { 'X-Master-Key': BIN_KEY, 'X-Bin-Meta': 'false' }
+    });
+    var idei = await res.json();
+    if (!Array.isArray(idei)) idei = [];
+    ideiCache = idei.filter(function(i) { return i && i.text; });
+    renderIdei();
+  } catch (e) {
+    container.innerHTML = '<p class="no-idei">Eroare la incarcarea ideilor. Incearca din nou!</p>';
+  }
+}
+function renderIdei() {
+  var container = document.getElementById('idei-container');
+  if (ideiCache.length === 0) {
     container.innerHTML = '<p class="no-idei">Nu ai salvat nicio idee inca. Mergi la generator si salveaza idei!</p>';
     return;
   }
   var grid = document.createElement('div');
   grid.className = 'idei-grid';
-  idei.forEach(function(idee, index) {
+  ideiCache.forEach(function(idee, index) {
     var card = document.createElement('div');
     card.className = 'idee-card';
     card.innerHTML =
@@ -70,14 +87,21 @@ function loadIdei() {
   container.innerHTML = '';
   container.appendChild(grid);
 }
-function deleteIdee(index, e) {
+async function deleteIdee(index, e) {
   e.stopPropagation();
   var pin = prompt('Introdu PIN-ul pentru a sterge:');
   if (pin !== PIN) { alert('PIN incorect!'); return; }
-  var idei = JSON.parse(localStorage.getItem('decorh_idei') || '[]');
-  idei.splice(index, 1);
-  localStorage.setItem('decorh_idei', JSON.stringify(idei));
-  loadIdei();
+  ideiCache.splice(index, 1);
+  renderIdei();
+  try {
+    await fetch('https://api.jsonbin.io/v3/b/' + BIN_ID, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': BIN_KEY },
+      body: JSON.stringify(ideiCache)
+    });
+  } catch (e) {
+    alert('Eroare la salvare pe server!');
+  }
 }
 function openFullscreen(idee) {
   document.getElementById('fullscreen-img').src = idee.img || '';
