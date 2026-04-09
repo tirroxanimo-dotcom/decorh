@@ -104,19 +104,19 @@ footer { margin-top: auto; text-align: center; padding: 16px; font-size: 0.72rem
 </div>
 <script>
 var BG_IMAGES = [
-  "imagini/img5.jpeg","imagini/img2.jpeg","imagini/img3.jpeg","imagini/img4.jpeg",
-  "imagini/img6.jpeg","imagini/img7.jpeg","imagini/img8.jpeg","imagini/img9.jpeg",
-  "imagini/img10.jpeg","imagini/img11.jpeg","imagini/img12.jpeg","imagini/img13.jpeg",
-  "imagini/img14.jpeg","imagini/img15.jpeg","imagini/img16.jpeg"
+  "images/img5.jpeg","images/img2.jpeg","images/img3.jpeg","images/img4.jpeg",
+  "images/img6.jpeg","images/img7.jpeg","images/img8.jpeg","images/img9.jpeg",
+  "images/img10.jpeg","images/img11.jpeg","images/img12.jpeg","images/img13.jpeg",
+  "images/img14.jpeg","images/img15.jpeg","images/img16.jpeg"
 ];
 var NAV_ITEMS = [
-  { label: "Nunti", img: "imagini/img2.jpeg", page: "nunti.html" },
-  { label: "Botezuri", img: "imagini/img3.jpeg", page: "botezuri.html" },
-  { label: "Pasti", img: "imagini/img4.jpeg", page: "pasti.html" },
-  { label: "Craciun", img: "imagini/img5.jpeg", page: "craciun.html" },
-  { label: "8 Martie", img: "imagini/img6.jpeg", page: "martie.html" },
-  { label: "Acasa", img: "imagini/img7.jpeg", page: "acasa.html" },
-  { label: "Idei Noi", img: "imagini/img9.jpeg", page: "idei.html" }
+  { label: "Nunti", img: "images/img2.jpeg", page: "nunti.html" },
+  { label: "Botezuri", img: "images/img3.jpeg", page: "botezuri.html" },
+  { label: "Pasti", img: "images/img4.jpeg", page: "pasti.html" },
+  { label: "Craciun", img: "images/img5.jpeg", page: "craciun.html" },
+  { label: "8 Martie", img: "images/img6.jpeg", page: "martie.html" },
+  { label: "Acasa", img: "images/img7.jpeg", page: "acasa.html" },
+  { label: "Idei Noi", img: "images/img9.jpeg", page: "idei.html" }
 ];
 var navEl = document.getElementById('main-nav');
 NAV_ITEMS.forEach(function(item) {
@@ -149,7 +149,7 @@ function goToSlide(n) {
   dots[currentSlide].classList.add('active');
 }
 setInterval(function() { goToSlide((currentSlide + 1) % BG_IMAGES.length); }, 5000);
-document.getElementById('gen-bg-photo').style.backgroundImage = 'url(\'imagini/img10.jpeg\')';
+document.getElementById('gen-bg-photo').style.backgroundImage = 'url(\'images/img10.jpeg\')';
 async function generateIdea() {
   var ocazie = document.getElementById('sel-ocazie').value;
   var stil = document.getElementById('sel-stil').value;
