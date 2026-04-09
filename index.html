@@ -44,7 +44,6 @@ nav.main-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 16p
 #result-box.visible { display: block; }
 #result-text { font-family: "Cormorant Garamond", serif; font-size: 1.05rem; font-weight: 300; color: #fdf6ec; line-height: 1.8; white-space: pre-wrap; }
 .result-label { font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
-.img-label { font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-top: 18px; margin-bottom: 8px; display: none; }
 .loading-dots span { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); margin: 0 2px; animation: dot-bounce 1.2s infinite; }
 .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
 .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
@@ -99,35 +98,25 @@ footer { margin-top: auto; text-align: center; padding: 16px; font-size: 0.72rem
     <div id="result-box">
       <div class="result-label">Idee generata</div>
       <div id="result-text"></div>
-      <div class="img-label" id="img-label">Previzualizare aranjament</div>
-      <img id="result-image" alt="Aranjament generat" style="width:100%;border-radius:12px;display:none;border:1px solid rgba(255,255,255,0.2);cursor:pointer;" onclick="openFullscreenImg()">
-      <div id="save-row" style="display:none;margin-top:12px;align-items:center;gap:10px;">
-        <input type="checkbox" id="chk-save" style="width:18px;height:18px;accent-color:#c9a84c;cursor:pointer;">
-        <label for="chk-save" style="color:rgba(255,255,255,0.85);font-size:0.85rem;cursor:pointer;">Salveaza in Idei Noi</label>
-        <button onclick="saveIdee()" style="margin-left:auto;padding:8px 20px;background:linear-gradient(135deg,#c9a84c,#e8c96a,#c9a84c);border:none;border-radius:8px;font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:500;color:#1a1208;cursor:pointer;letter-spacing:0.1em;text-transform:uppercase;">Salveaza</button>
-      </div>
     </div>
   </section>
   <footer>2025 DecorH - Creat cu dragoste</footer>
 </div>
 <script>
-var UNSPLASH_KEY = 'kSVsTcXsDnfrUV_gMBsoGhMs_WxXI7WNy2pnuea4pyg';
-var lastImageUrl = '';
-var lastText = '';
 var BG_IMAGES = [
-  "images/img5.jpeg","images/img2.jpeg","images/img3.jpeg","images/img4.jpeg",
-  "images/img6.jpeg","images/img7.jpeg","images/img8.jpeg","images/img9.jpeg",
-  "images/img10.jpeg","images/img11.jpeg","images/img12.jpeg","images/img13.jpeg",
-  "images/img14.jpeg","images/img15.jpeg","images/img16.jpeg"
+  "imagini/img5.jpeg","imagini/img2.jpeg","imagini/img3.jpeg","imagini/img4.jpeg",
+  "imagini/img6.jpeg","imagini/img7.jpeg","imagini/img8.jpeg","imagini/img9.jpeg",
+  "imagini/img10.jpeg","imagini/img11.jpeg","imagini/img12.jpeg","imagini/img13.jpeg",
+  "imagini/img14.jpeg","imagini/img15.jpeg","imagini/img16.jpeg"
 ];
 var NAV_ITEMS = [
-  { label: "Nunti", img: "images/img2.jpeg", page: "nunti.html" },
-  { label: "Botezuri", img: "images/img3.jpeg", page: "botezuri.html" },
-  { label: "Pasti", img: "images/img4.jpeg", page: "pasti.html" },
-  { label: "Craciun", img: "images/img5.jpeg", page: "craciun.html" },
-  { label: "8 Martie", img: "images/img6.jpeg", page: "martie.html" },
-  { label: "Acasa", img: "images/img7.jpeg", page: "acasa.html" },
-  { label: "Idei Noi", img: "images/img9.jpeg", page: "idei.html" }
+  { label: "Nunti", img: "imagini/img2.jpeg", page: "nunti.html" },
+  { label: "Botezuri", img: "imagini/img3.jpeg", page: "botezuri.html" },
+  { label: "Pasti", img: "imagini/img4.jpeg", page: "pasti.html" },
+  { label: "Craciun", img: "imagini/img5.jpeg", page: "craciun.html" },
+  { label: "8 Martie", img: "imagini/img6.jpeg", page: "martie.html" },
+  { label: "Acasa", img: "imagini/img7.jpeg", page: "acasa.html" },
+  { label: "Idei Noi", img: "imagini/img9.jpeg", page: "idei.html" }
 ];
 var navEl = document.getElementById('main-nav');
 NAV_ITEMS.forEach(function(item) {
@@ -160,7 +149,7 @@ function goToSlide(n) {
   dots[currentSlide].classList.add('active');
 }
 setInterval(function() { goToSlide((currentSlide + 1) % BG_IMAGES.length); }, 5000);
-document.getElementById('gen-bg-photo').style.backgroundImage = 'url(\'images/img10.jpeg\')';
+document.getElementById('gen-bg-photo').style.backgroundImage = 'url(\'imagini/img10.jpeg\')';
 async function generateIdea() {
   var ocazie = document.getElementById('sel-ocazie').value;
   var stil = document.getElementById('sel-stil').value;
@@ -169,16 +158,8 @@ async function generateIdea() {
   var btn = document.getElementById('btn-gen');
   var resultBox = document.getElementById('result-box');
   var resultText = document.getElementById('result-text');
-  var resultImage = document.getElementById('result-image');
-  var imgLabel = document.getElementById('img-label');
-  var saveRow = document.getElementById('save-row');
-  var chk = document.getElementById('chk-save');
   btn.disabled = true;
   resultBox.classList.add('visible');
-  resultImage.style.display = 'none';
-  imgLabel.style.display = 'none';
-  saveRow.style.display = 'none';
-  chk.checked = false;
   resultText.innerHTML = '<div class="loading-dots"><span></span><span></span><span></span></div>';
   try {
     var response = await fetch('/api/generate', {
@@ -187,58 +168,11 @@ async function generateIdea() {
       body: JSON.stringify({ ocazie: ocazie, stil: stil, detalii: detalii })
     });
     var data = await response.json();
-    lastText = data.result;
-    resultText.textContent = lastText;
+    resultText.textContent = data.result;
   } catch (err) {
-    lastText = '';
     resultText.textContent = 'A aparut o eroare. Te rog incearca din nou.';
   }
-  try {
-    var query = 'floral arrangement ' + (ocazie || '') + ' ' + (stil || '') + ' ' + (detalii || '');
-    var imgResponse = await fetch(
-      'https://api.unsplash.com/photos/random?query=' + encodeURIComponent(query) + '&orientation=landscape&client_id=' + UNSPLASH_KEY
-    );
-    var imgData = await imgResponse.json();
-    if (imgData && imgData.urls && imgData.urls.regular) {
-      lastImageUrl = imgData.urls.regular;
-      resultImage.src = lastImageUrl;
-      resultImage.onload = function() {
-        resultImage.style.display = 'block';
-        imgLabel.style.display = 'block';
-        saveRow.style.display = 'flex';
-      };
-    }
-  } catch (e) {
-    resultImage.style.display = 'none';
-  }
   btn.disabled = false;
-}
-function openFullscreenImg() {
-  if (!lastImageUrl) return;
-  var overlay = document.getElementById('fs-overlay');
-  if (!overlay) {
-    overlay = document.createElement('div');
-    overlay.id = 'fs-overlay';
-    overlay.style.cssText = 'display:flex;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.95);flex-direction:column;align-items:center;justify-content:center;padding:20px;';
-    overlay.innerHTML =
-      '<button onclick="document.getElementById(\'fs-overlay\').style.display=\'none\'" style="position:absolute;top:20px;right:24px;background:none;border:1px solid rgba(255,255,255,0.4);color:#fff;font-size:1.2rem;width:40px;height:40px;border-radius:50%;cursor:pointer;">✕</button>' +
-      '<img id="fs-img" style="max-width:100%;max-height:80vh;border-radius:12px;object-fit:contain;">' +
-      '<div id="fs-text" style="font-family:Cormorant Garamond,serif;font-size:1rem;color:#fdf6ec;margin-top:16px;text-align:center;max-width:600px;line-height:1.7;"></div>';
-    document.body.appendChild(overlay);
-  }
-  document.getElementById('fs-img').src = lastImageUrl;
-  document.getElementById('fs-text').textContent = lastText;
-  overlay.style.display = 'flex';
-}
-function saveIdee() {
-  var chk = document.getElementById('chk-save');
-  if (!chk.checked) { alert('Bifeaza casuta pentru a salva!'); return; }
-  if (!lastImageUrl) { alert('Nu exista imagine de salvat!'); return; }
-  var idei = JSON.parse(localStorage.getItem('decorh_idei') || '[]');
-  idei.push({ img: lastImageUrl, text: lastText });
-  localStorage.setItem('decorh_idei', JSON.stringify(idei));
-  chk.checked = false;
-  alert('Idee salvata in Idei Noi!');
 }
 </script>
 </body>
