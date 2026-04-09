@@ -50,6 +50,8 @@ h1 em { font-style: italic; color: #f5d98a; }
 <script>
 var BIN_ID = '69d7b4b0856a682189160322';
 var BIN_KEY = '$2a$10$bYLghQCqVt5qiTAJOGpMsO7FISOLe7dPr5B.pHU4Ace9/L.abt76y';
+var PIN = '2026';
+var ideiCache = [];
 async function loadIdei() {
   var container = document.getElementById('idei-container');
   try {
@@ -58,51 +60,51 @@ async function loadIdei() {
     });
     var idei = await res.json();
     if (!Array.isArray(idei)) idei = [];
-    idei = idei.filter(function(i) { return i && i.img; });
-    if (idei.length === 0) {
-      container.innerHTML = '<p class="no-idei">Nu ai salvat nicio idee inca. Mergi la generator si salveaza idei!</p>';
-      return;
-    }
-    var grid = document.createElement('div');
-    grid.className = 'idei-grid';
-    idei.forEach(function(idee, index) {
-      var card = document.createElement('div');
-      card.className = 'idee-card';
-      card.innerHTML =
-        '<img src="' + idee.img + '" alt="Aranjament">' +
-        '<div class="card-text">' + idee.text.substring(0, 100) + '...</div>' +
-        '<button class="card-delete" onclick="deleteIdee(' + index + ', event)">✕</button>';
-      card.onclick = function() { openFullscreen(idee); };
-      grid.appendChild(card);
-    });
-    container.innerHTML = '';
-    container.appendChild(grid);
+    ideiCache = idei.filter(function(i) { return i && i.text; });
+    renderIdei();
   } catch (e) {
     container.innerHTML = '<p class="no-idei">Eroare la incarcarea ideilor. Incearca din nou!</p>';
   }
 }
+function renderIdei() {
+  var container = document.getElementById('idei-container');
+  if (ideiCache.length === 0) {
+    container.innerHTML = '<p class="no-idei">Nu ai salvat nicio idee inca. Mergi la generator si salveaza idei!</p>';
+    return;
+  }
+  var grid = document.createElement('div');
+  grid.className = 'idei-grid';
+  ideiCache.forEach(function(idee, index) {
+    var card = document.createElement('div');
+    card.className = 'idee-card';
+    card.innerHTML =
+      '<img src="' + (idee.img || '') + '" alt="Aranjament">' +
+      '<div class="card-text">' + idee.text.substring(0, 100) + '...</div>' +
+      '<button class="card-delete" onclick="deleteIdee(' + index + ', event)">✕</button>';
+    card.onclick = function() { openFullscreen(idee); };
+    grid.appendChild(card);
+  });
+  container.innerHTML = '';
+  container.appendChild(grid);
+}
 async function deleteIdee(index, e) {
   e.stopPropagation();
+  var pin = prompt('Introdu PIN-ul pentru a sterge:');
+  if (pin !== PIN) { alert('PIN incorect!'); return; }
+  ideiCache.splice(index, 1);
+  renderIdei();
   try {
-    var res = await fetch('https://api.jsonbin.io/v3/b/' + BIN_ID + '/latest', {
-      headers: { 'X-Master-Key': BIN_KEY, 'X-Bin-Meta': 'false' }
-    });
-    var idei = await res.json();
-    if (!Array.isArray(idei)) idei = [];
-    idei = idei.filter(function(i) { return i && i.img; });
-    idei.splice(index, 1);
     await fetch('https://api.jsonbin.io/v3/b/' + BIN_ID, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', 'X-Master-Key': BIN_KEY },
-      body: JSON.stringify(idei)
+      body: JSON.stringify(ideiCache)
     });
-    loadIdei();
   } catch (e) {
-    alert('Eroare la stergere!');
+    alert('Eroare la salvare pe server!');
   }
 }
 function openFullscreen(idee) {
-  document.getElementById('fullscreen-img').src = idee.img;
+  document.getElementById('fullscreen-img').src = idee.img || '';
   document.getElementById('fullscreen-text').textContent = idee.text;
   document.getElementById('fullscreen-overlay').classList.add('visible');
 }
